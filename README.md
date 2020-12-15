@@ -1,6 +1,6 @@
 # Water Level Indicator API
 
-[![tests-badge]](https://github.com/vinay-lanka/water-level-api/actions/?workflow=Test)
+![Test](https://github.com/vinay-lanka/water-level-api/workflows/Test/badge.svg)
 
 ## Introduction
 
