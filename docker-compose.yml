@@ -1,0 +1,28 @@
+version: '3'
+services:
+
+  redis-server:
+    image: 'redis'
+  
+  node_app:
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    build: .
+    ports: 
+     - "3000:3000"
+    volumes: 
+      - /app/node_modules
+      - .:/app
+    devices:
+      - "/dev/mem:/dev/mem"
+    privileged: true
+  
+  node_app_test:
+    environment:
+      - NODE_ENV=test
+    build: 
+      context: .
+      dockerfile: Dockerfile.test
+    volumes: 
+      - /app/node_modules
+      - .:/app

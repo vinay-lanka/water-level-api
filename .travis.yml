@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+env:
+  - DOCKER_COMPOSE_VERSION=1.27.4
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker-compose -p ci up -d
+
+scripts:
+  - docker wait ci_node_app_test_1
+
+after_success:
+  - docker-compose down 
+  - docker build -t vinaylanka/water-level-api .
+  #Log in
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #push images
+  - docker push vinaylanka/water-level-api
