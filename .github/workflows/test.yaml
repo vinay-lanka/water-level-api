@@ -1,0 +1,26 @@
+name: build our image
+
+on:
+  push:
+    branches: master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: Build the stack
+        run: docker-compose -p ci up -d
+      - name: Test 
+        run: docker wait ci_node_app_test_1
+      - name: install buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          version: latest
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} 
+             -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and Push the image
+        run:  docker buildx build --push --platform linux/arm,linux/arm64,linux/amd64 --tag vinaylanka/water-level-api:latest  .
