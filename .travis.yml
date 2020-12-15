@@ -1,10 +1,15 @@
+language: bash
+dist: xenial
 sudo: required
-services:
-  - docker
 env:
   - DOCKER_COMPOSE_VERSION=1.27.4
 
 before_install:
+  - curl -fsSL https://get.docker.com | sh
+  - echo '{"experimental":"enabled"}' | sudo tee /etc/docker/daemon.json
+  - mkdir -p $HOME/.docker
+  - echo '{"experimental":"enabled"}' | sudo tee $HOME/.docker/config.json
+  - sudo service docker start
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
@@ -19,11 +24,7 @@ after_success:
   #Log in
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   #push images
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-  - mkdir -vp ~/.docker/cli-plugins/
-  - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.3.0/buildx-v0.3.0.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
-  - chmod a+x ~/.docker/cli-plugins/docker-buildx
-  - docker buildx create --use
-  - docker buildx build --push \
-    --tag vinaylanka/water-level-api:latest \
-    --platform linux/amd64,linux/arm/v7,linux/arm64 .
+  - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  - docker buildx create --name xbuilder --use
+  - docker buildx inspect --bootstrap
+  - docker buildx build --push --platform linux/arm,linux/arm64,linux/amd64 --tag vinaylanka/water-level-api:latest  .
