@@ -1,6 +1,6 @@
 # Water Level Indicator API
 
-![Test](https://github.com/vinay-lanka/water-level-api/workflows/Test/badge.svg)
+![Test](https://github.com/vinay-lanka/water-level-api/workflows/Test/badge.svg) [![Build Status](https://travis-ci.com/vinay-lanka/water-level-api.svg?branch=master)](https://travis-ci.com/vinay-lanka/water-level-api)
 
 ## Introduction
 

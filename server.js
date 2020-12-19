@@ -48,9 +48,19 @@ app.post("/update", (req, res) => {
                 }
             }
 
-            if((req.body.value > 70)&&(value == 0)){
-                client.set('toggle', 1);
+            if((req.body.value > 90)&&(value == 0)){
+                var blinkInterval = setInterval(beepbuzzer, 250);
+                setTimeout(endBlink, 5000);
+                function endBlink() { //function to stop blinking
+                    clearInterval(blinkInterval); // Stop blink intervals
+                    buzzer.writeSync(0); // Turn buzzer off
+                    // buzzer.unexport(); // Unexport GPIO to free resources
+                }
             }
+
+            // if((req.body.value > 70)&&(value == 0)){
+            //     client.set('toggle', 1);
+            // }
         }else{
             res.statusCode(404);
         }
@@ -86,6 +96,11 @@ app.get('/status', (req,res)=>{
 
 app.get('/turnedoff', (req, res) => {
     client.set('toggle', 0);
+    res.send("turnedoff");
+})
+
+app.get('/turnedon', (req, res) => {
+    client.set('toggle', 1);
     res.send("turnedoff");
 })
 
